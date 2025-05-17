@@ -1,6 +1,6 @@
 model Log {
   id        String   @id @default(uuid())
-  userId    String
+  userId    String   @map("user_id")
   user      User     @relation(fields: [userId], references: [id])
   action    String
   timestamp DateTime @default(now())

@@ -2,7 +2,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { ErrorRequestHandler } from "express";
 import { ZodError } from "zod";
 import { ApiResponse } from "../common/payload/ApiResponse";
-import { AppError } from "../exceptions/app.error";
+import { AppException } from "../exceptions/app.exception";
 import logger from "../utils/logger.util";
 
 export const errorMiddleware: ErrorRequestHandler = (err, req, res, next): void => {
@@ -23,7 +23,7 @@ export const errorMiddleware: ErrorRequestHandler = (err, req, res, next): void 
     return;
   }
 
-  if (err instanceof AppError) {
+  if (err instanceof AppException) {
     res.status(err.statusCode || 400).json(ApiResponse.fail({ code: err.statusCode || 400, message: err.message }));
     return;
   }

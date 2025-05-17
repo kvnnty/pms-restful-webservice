@@ -1,4 +1,5 @@
 import transporter from "../config/mail.config";
+import { InternalServerErrorException } from "../exceptions/internal-server-error.exception";
 
 class MailUtil {
   async sendEmail(to: string, subject: string, html?: string): Promise<void> {
@@ -11,7 +12,7 @@ class MailUtil {
       });
     } catch (error) {
       console.error("Error sending email:", error);
-      throw new Error("Failed to send email. Please try again.");
+      throw new InternalServerErrorException("Failed to send email. Please try again.");
     }
   }
 }

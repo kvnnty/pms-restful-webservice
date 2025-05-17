@@ -4,15 +4,15 @@ enum SlotStatus {
 }
 
 model ParkingSlot {
-  id          String       @id @default(uuid())
-  slotNumber  String       @unique
-  size        VehicleSize
-  vehicleType VehicleType
-  location    String
-  status      SlotStatus   @default(AVAILABLE)
-  slotRequest SlotRequest?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id           String        @id @default(uuid())
+  slotNumber   String        @unique @map("slot_number")
+  size         VehicleSize
+  vehicleType  VehicleType   @map("vehicle_type")
+  location     String
+  status       SlotStatus    @default(AVAILABLE)
+  slotRequests SlotRequest[]
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
 
   @@map("parking_slots")
 }

@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
-import { AppError } from "./app.error";
+import { AppException } from "./app.exception";
 
-export class NotFoundError extends AppError {
+export class ResourceNotFoundException extends AppException {
   constructor(message = "Not found") {
     super(message, StatusCodes.NOT_FOUND);
   }

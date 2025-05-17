@@ -1,7 +1,7 @@
-import { AppError } from "./app.error";
+import { AppException } from "./app.exception";
 import { StatusCodes } from "http-status-codes";
 
-export class UnauthorizedError extends AppError {
+export class UnauthorizedException extends AppException {
   constructor(message = "Not authorized to perform action") {
     super(message, StatusCodes.UNAUTHORIZED);
   }
