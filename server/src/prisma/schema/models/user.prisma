@@ -1,0 +1,21 @@
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  password     String
+  firstName    String
+  lastName     String
+  isVerified   Boolean       @default(false)
+  role         Role?         @default(USER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  vehicles     Vehicle[]
+  logs         Log[]
+  slotRequests SlotRequest[]
+
+  @@map("users")
+}

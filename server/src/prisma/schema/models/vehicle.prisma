@@ -1,0 +1,26 @@
+enum VehicleType {
+  CAR
+  MOTOCYCLE
+  TRUCK
+}
+
+enum VehicleSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+model Vehicle {
+  id           String        @id @default(uuid())
+  plateNumber  String        @unique
+  vehicleType  VehicleType
+  vehicleSize  VehicleSize
+  attributes   Json
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  slotRequests SlotRequest[]
+
+  @@map("vehicles")
+}

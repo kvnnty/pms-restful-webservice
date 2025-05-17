@@ -1,0 +1,18 @@
+enum SlotStatus {
+  AVAILABLE
+  UNAVAILABLE
+}
+
+model ParkingSlot {
+  id          String       @id @default(uuid())
+  slotNumber  String       @unique
+  size        VehicleSize
+  vehicleType VehicleType
+  location    String
+  status      SlotStatus   @default(AVAILABLE)
+  slotRequest SlotRequest?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("parking_slots")
+}
