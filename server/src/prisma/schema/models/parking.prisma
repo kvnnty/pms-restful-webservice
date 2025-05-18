@@ -1,0 +1,12 @@
+model Parking {
+  id           String        @id @default(uuid())
+  name         String
+  address      String
+  pricePerHour Float
+  capacity     Int
+  parkingSlots ParkingSlot[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("parkings")
+}

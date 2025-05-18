@@ -13,6 +13,8 @@ model ParkingSlot {
   slotRequests SlotRequest[]
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
+  parkingId    String?       @map("parking_id")
+  parking      Parking?      @relation(fields: [parkingId], references: [id])
 
   @@map("parking_slots")
 }

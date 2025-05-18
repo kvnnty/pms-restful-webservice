@@ -4,6 +4,7 @@ import app from "./app";
 import { PORT } from "./config/env.config";
 import { prisma } from "./prisma/client";
 import logger from "./utils/logger.util";
+import { ensureAdminUser } from "./prisma/seed";
 
 dotenv.config();
 const server = http.createServer(app);
@@ -12,6 +13,8 @@ async function startServer() {
   try {
     await prisma.$connect();
     logger.info("[DB] Connected to database.");
+
+    await ensureAdminUser();
 
     server.listen(PORT, () => {
       logger.info(`[Server] Running on http://localhost:${PORT}`);
