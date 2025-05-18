@@ -1,20 +1,20 @@
-enum SlotStatus {
+enum ParkingSlotStatus {
   AVAILABLE
   UNAVAILABLE
 }
 
 model ParkingSlot {
-  id           String        @id @default(uuid())
-  slotNumber   String        @unique @map("slot_number")
-  size         VehicleSize
-  vehicleType  VehicleType   @map("vehicle_type")
+  id           String            @id @default(uuid())
+  slotNumber   String            @unique @map("slot_number")
+  vehicleSize  VehicleSize       @map("vehicle_size")
+  vehicleType  VehicleType       @map("vehicle_type")
   location     String
-  status       SlotStatus    @default(AVAILABLE)
-  slotRequests SlotRequest[]
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @updatedAt @map("updated_at")
-  parkingId    String?       @map("parking_id")
-  parking      Parking?      @relation(fields: [parkingId], references: [id])
+  status       ParkingSlotStatus @default(AVAILABLE)
+  slotRequests BookingRequest[]
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+  parkingId    String?           @map("parking_id")
+  parking      Parking?          @relation(fields: [parkingId], references: [id])
 
   @@map("parking_slots")
 }

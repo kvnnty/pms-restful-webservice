@@ -1,16 +1,22 @@
 import { Role } from "@prisma/client";
 import { Router } from "express";
 import authMiddleware from "../../middleware/auth.middleware";
-import parkingController from "./parking.controller";
 import validationMiddleware from "../../middleware/validation.middleware";
-import { createParkingDto } from "./parking.dto";
+import parkingController from "./parking.controller";
+import { createParkingDto, updateParkingDto } from "./parking.dto";
 
 const router = Router();
 
-router.post("/", authMiddleware.requireAuth, authMiddleware.requireRole(Role.ADMIN), validationMiddleware.validate(createParkingDto), parkingController.create);
-router.get("/", authMiddleware.requireAuth, parkingController.findAll);
-router.get("/:id", authMiddleware.requireAuth, parkingController.findOne);
-router.put("/:id", authMiddleware.requireAuth, authMiddleware.requireRole(Role.ADMIN), parkingController.update);
-router.delete("/:id", authMiddleware.requireAuth, authMiddleware.requireRole(Role.ADMIN), parkingController.delete);
+const { requireAuth, requireRole } = authMiddleware;
+const { validate } = validationMiddleware;
+
+router.use(requireAuth);
+
+router.post("/", requireRole(Role.ADMIN), validate(createParkingDto), parkingController.create);
+router.get("/", parkingController.findAll);
+router.get("/:id", parkingController.findOne);
+router.put("/:id", requireRole(Role.ADMIN), validate(updateParkingDto), parkingController.update);
+router.delete("/:id", requireRole(Role.ADMIN), parkingController.delete);
+router.get("/:id/parking-slots", parkingController.listSlots);
 
 export { router as parkingRoutes };

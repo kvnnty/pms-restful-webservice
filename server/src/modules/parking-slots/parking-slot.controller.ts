@@ -26,27 +26,6 @@ class ParkingSlotController {
     );
   });
 
-  listSlots = catchAsync(async (req, res) => {
-    const isAdmin = (req as any).user.role === Role.ADMIN;
-    const { page, limit, search } = req.query;
-    const pageNum = page ? +page : 1;
-    const limitNum = limit ? +limit : 10;
-    const result = await parkingSlotService.listSlots({
-      parkingId: req.params.parkingId,
-      page: pageNum,
-      limit: limitNum,
-      search: search ? String(search) : "",
-      isAdmin,
-    });
-    return res.status(StatusCodes.OK).json(
-      ApiResponse.success({
-        code: StatusCodes.OK,
-        message: "Slots fetched",
-        data: result,
-      })
-    );
-  });
-
   updateSlot = catchAsync(async (req, res) => {
     const { id } = req.params;
     const updatedSlot = await parkingSlotService.updateSlot({ slotId: id, data: req.body });

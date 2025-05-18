@@ -1,0 +1,20 @@
+enum BookingRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model BookingRequest {
+  id        String               @id @default(uuid())
+  userId    String               @map("user_id")
+  vehicleId String               @map("vehicle_id")
+  slotId    String?              @unique @map("slot_id")
+  status    BookingRequestStatus @default(PENDING)
+  createdAt DateTime             @default(now()) @map("created_at")
+  updatedAt DateTime             @updatedAt @map("updated_at")
+  user      User                 @relation(fields: [userId], references: [id])
+  vehicle   Vehicle              @relation(fields: [vehicleId], references: [id])
+  slot      ParkingSlot?         @relation(fields: [slotId], references: [id])
+
+  @@map("booking_requests")
+}

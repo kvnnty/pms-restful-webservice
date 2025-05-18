@@ -79,7 +79,7 @@ class ParkingSlotService {
         OR: [
           { slotNumber: { contains: search, mode: "insensitive" } },
           ...(isValidVehicleType ? [{ vehicleType: { equals: searchUpper as VehicleType } }] : []),
-          ...(isValidVehicleSize ? [{ size: { equals: searchUpper as VehicleSize } }] : []),
+          ...(isValidVehicleSize ? [{ vehicleSize: { equals: searchUpper as VehicleSize } }] : []),
         ],
       }),
       ...(isAdmin ? {} : { status: "AVAILABLE" }),
