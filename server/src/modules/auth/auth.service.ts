@@ -11,8 +11,12 @@ export class AuthService {
     if (!user || !(await bcrypt.compare(data.password, user.password))) {
       throw new BadCredentialsException("Invalid email or password.");
     }
+    const { password, ...cleanedUserData } = user;
     const token = jwtUtil.generateJwtToken(user);
-    return { token };
+    return {
+      token,
+      user: cleanedUserData,
+    };
   }
   async createUser(data: CreateUserDto) {
     const existing = await userService.findUserByEmail(data.email);

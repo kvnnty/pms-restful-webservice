@@ -6,8 +6,8 @@ import authService from "./auth.service";
 
 export class AuthController {
   login = catchAsync(async (req: Request, res: Response) => {
-    const tokens = await authService.login(req.body);
-    const response = ApiResponse.success({ code: 200, message: "Logged in", data: tokens });
+    const { token, user } = await authService.login(req.body);
+    const response = ApiResponse.success({ code: 200, message: "Logged in", data: { token, user } });
     res.status(StatusCodes.OK).json(response);
   });
   createUser = catchAsync(async (req: Request, res: Response) => {
