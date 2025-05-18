@@ -36,6 +36,12 @@ class BookingRequestController {
     const result = await bookingRequestService.listRequests(userId, role, req.query);
     res.json(ApiResponse.success({ code: StatusCodes.CREATED, message: "Requests fetched", data: result }));
   });
+
+  getBySlotId = catchAsync(async (req, res) => {
+    const { slotId } = req.params;
+    const requests = await bookingRequestService.getBySlotId(slotId);
+    res.status(200).json(ApiResponse.success({ message: "Requests fetched", data: requests }));
+  });
 }
 
 export default new BookingRequestController();

@@ -159,6 +159,15 @@ class BookingRequestService {
       },
     };
   }
+  async getBySlotId(slotId: string) {
+    return prisma.bookingRequest.findMany({
+      where: { slotId },
+      include: {
+        vehicle: true,
+        user: true,
+      },
+    });
+  }
 }
 
 export default new BookingRequestService();
