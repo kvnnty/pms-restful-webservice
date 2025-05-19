@@ -18,10 +18,10 @@ import SettingsPage from "@/pages/dashboard/settings/page";
 
 // Admin Pages
 import LogsPage from "@/pages/dashboard/admin/logs/page";
-import ViewParkingSlotRequestDetailsPage from "@/pages/dashboard/admin/parking-slot-requests/[id]/page";
-import ViewAllParkingSlotRequestsPage from "@/pages/dashboard/admin/parking-slot-requests/page";
+import ViewParkingSlotRequestDetailsPage from "@/pages/dashboard/admin/parking-slot-booking-requests/[id]/page";
+import AdminViewAllParkingSlotRequestsPage from "@/pages/dashboard/admin/parking-slot-booking-requests/page";
 import AdminViewParkingDetailsPage from "@/pages/dashboard/admin/parkings/[id]/page";
-import AdminParkingsPage from "@/pages/dashboard/admin/parkings/pages";
+import AdminParkingsPage from "@/pages/dashboard/admin/parkings/page";
 import AdminViewAllUsersPage from "@/pages/dashboard/admin/users/page";
 import AdminViewVehicleDetailsPage from "@/pages/dashboard/admin/vehicles/[id]/page";
 import AdminViewAllVehiclesPage from "@/pages/dashboard/admin/vehicles/page";
@@ -31,11 +31,9 @@ import AdminRoutes from "./protected/AdminRoutes";
 import UserViewParkingDetailsPage from "@/pages/dashboard/user/parkings/[id]/page";
 import UserParkingsPage from "@/pages/dashboard/user/parkings/page";
 import UserViewBookingRequestPage from "@/pages/dashboard/user/requests/[id]/page";
-import UserCreateBookingRequestPage from "@/pages/dashboard/user/requests/create/page";
 import UserBookingRequestsPage from "@/pages/dashboard/user/requests/page";
 import UserVehicleDetailsPage from "@/pages/dashboard/user/vehicles/[id]/page";
 import UserVehiclesPage from "@/pages/dashboard/user/vehicles/page";
-import UserRegisterVehicle from "@/pages/dashboard/user/vehicles/register-vehicle/page";
 import UserRoutes from "./protected/UserRoutes";
 
 // Utils
@@ -68,12 +66,10 @@ function PageRoutes() {
               <Route path="user" element={<UserRoutes />}>
                 <Route path="vehicles">
                   <Route index element={<UserVehiclesPage />} />
-                  <Route path="register-vehicle" element={<UserRegisterVehicle />} />
                   <Route path=":id" element={<UserVehicleDetailsPage />} />
                 </Route>
                 <Route path="requests">
                   <Route index element={<UserBookingRequestsPage />} />
-                  <Route path="create" element={<UserCreateBookingRequestPage />} />
                   <Route path=":id" element={<UserViewBookingRequestPage />} />
                 </Route>
                 <Route path="parkings">
@@ -96,8 +92,8 @@ function PageRoutes() {
                   <Route index element={<AdminViewAllVehiclesPage />} />
                   <Route path=":id" element={<AdminViewVehicleDetailsPage />} />
                 </Route>
-                <Route path="parking-slot-requests">
-                  <Route index element={<ViewAllParkingSlotRequestsPage />} />
+                <Route path="parking-slot-booking-requests">
+                  <Route index element={<AdminViewAllParkingSlotRequestsPage />} />
                   <Route path=":id" element={<ViewParkingSlotRequestDetailsPage />} />
                 </Route>
                 <Route path="logs" element={<LogsPage />} />

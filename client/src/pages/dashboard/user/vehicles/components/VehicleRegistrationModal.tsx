@@ -33,7 +33,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function UserRegisterVehicle() {
+export default function VehicleRegistrationModal() {
   const [loading, setLoading] = useState(false);
 
   const {
@@ -84,17 +84,14 @@ export default function UserRegisterVehicle() {
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Register New Vehicle</h1>
+    <div className="mt-4">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Plate Number */}
         <div>
           <label>Plate number</label>
           <Input className="mt-2" placeholder="Plate Number, eg RAB123U" {...register("plateNumber")} />
           {errors.plateNumber && <p className="text-sm text-red-500">{errors.plateNumber.message}</p>}
         </div>
 
-        {/* Vehicle Type */}
         <div>
           <label>Vehicle type</label>
           <Select onValueChange={(value) => setValue("vehicleType", value as any)}>
@@ -110,7 +107,6 @@ export default function UserRegisterVehicle() {
           {errors.vehicleType && <p className="text-sm text-red-500">{errors.vehicleType.message}</p>}
         </div>
 
-        {/* Vehicle Size */}
         <div>
           <label>Vehicle size</label>
           <Select onValueChange={(value) => setValue("vehicleSize", value as any)}>
@@ -126,7 +122,6 @@ export default function UserRegisterVehicle() {
           {errors.vehicleSize && <p className="text-sm text-red-500">{errors.vehicleSize.message}</p>}
         </div>
 
-        {/* Attributes */}
         <div>
           <label className="block font-medium mb-1">Attributes</label>
           {attrFields.map((field, index) => (

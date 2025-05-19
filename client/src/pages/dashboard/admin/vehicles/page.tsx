@@ -1,61 +1,102 @@
-"use client";
-
+import TableLoader from "@/components/loaders/TableLoader";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import axiosClient from "@/config/axios.config";
-import { useQuery } from "@tanstack/react-query";
-
-type Vehicle = {
-  id: string;
-  plateNumber: string;
-  vehicleType: string;
-  vehicleSize: string;
-  ownerId: string;
-  createdAt: string;
-};
-
-async function fetchVehicles(): Promise<Vehicle[]> {
-  const res = await axiosClient.get("/vehicles");
-  return res.data.data;
-}
+import type { Vehicle } from "@/types/vehicle";
+import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 export default function AdminViewAllVehiclesPage() {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["vehicles"],
-    queryFn: fetchVehicles,
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const res = await axiosClient.get("/vehicles");
+        setVehicles(res.data.data);
+      } catch (err: any) {
+        toast.error(err.response.data.message);
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
+
+  const columns: ColumnDef<Vehicle>[] = [
+    {
+      accessorKey: "plateNumber",
+      header: "Plate Number",
+      cell: ({ row }) => <span className="font-medium bg-gray-200 px-3 py-2 rounded">{row.original.plateNumber}</span>,
+    },
+    {
+      accessorKey: "vehicleType",
+      header: "Type",
+    },
+    {
+      accessorKey: "vehicleSize",
+      header: "Size",
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Registered On",
+      cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div className="flex gap-2 items-center">
+          <Link to={`/dashboard/admin/vehicles/${row.original.id}`}>
+            <Button>View vehicle details</Button>
+          </Link>
+          <Link to={`/dashboard/admin/users/${row.original.ownerId}`}>
+            <Button>View Owner</Button>
+          </Link>
+        </div>
+      ),
+    },
+  ];
+
+  const table = useReactTable({
+    data: vehicles,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
   });
 
-  if (isError) {
-    return <div className="p-4 text-red-500">Failed to load vehicles.</div>;
-  }
-
   return (
-    <div className="p-6">
+    <div>
       <h2 className="text-xl font-bold mb-4">All Registered Vehicles</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {isLoading
-          ? Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="p-4 space-y-2">
-                <Skeleton className="h-5 w-2/3" />
-                <Skeleton className="h-4 w-1/3" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-            ))
-          : data?.map((vehicle) => (
-              <div key={vehicle.id} className="p-4">
-                <div className="p-0 space-y-2">
-                  <div className="text-lg font-semibold">{vehicle.plateNumber}</div>
-                  <span>{vehicle.vehicleType}</span>
-                  <div className="text-sm text-muted-foreground">Size: {vehicle.vehicleSize}</div>
-                  <div className="text-xs text-muted-foreground">Registered on: {new Date(vehicle.createdAt).toLocaleDateString()}</div>
-                  {/* Placeholder for future actions */}
-                  <Button variant="outline" className="mt-2 w-full">
-                    View Owner
-                  </Button>
-                </div>
-              </div>
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+
+        {loading ? (
+          <TableLoader columnCount={columns.length} />
+        ) : (
+          <TableBody>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                ))}
+              </TableRow>
             ))}
-      </div>
+          </TableBody>
+        )}
+      </Table>
     </div>
   );
 }

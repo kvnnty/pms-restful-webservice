@@ -1,12 +1,12 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { type ColumnDef } from "@tanstack/react-table";
-import { useMemo } from "react";
-import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
+import TableLoader from "@/components/loaders/TableLoader";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import axiosClient from "@/config/axios.config";
+import { useQuery } from "@tanstack/react-query";
+import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
+import clsx from "clsx";
+import { useMemo } from "react";
 
 type User = {
   id: string;
@@ -31,18 +31,29 @@ export default function AdminAllViewUsersPage() {
 
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
-      { accessorKey: "firstName", header: "First Name" },
-      { accessorKey: "lastName", header: "Last Name" },
-      { accessorKey: "email", header: "Email" },
+      {
+        accessorKey: "user",
+        header: "Customer ",
+        cell: ({ row }) => (
+          <div>
+            <h3 className="font-semibold">
+              {row.original.firstName} {row.original.lastName}
+            </h3>
+            <span className="text-sm text-gray-400">{row.original.email}</span>,
+          </div>
+        ),
+      },
       { accessorKey: "role", header: "Role" },
       {
         accessorKey: "isVerified",
         header: "Verified",
-        cell: ({ row }) => (row.original.isVerified ? "Yes" : "No"),
+        cell: ({ row }) => (
+          <span className={clsx("px-2 rounded", row.original.isVerified ? "bg-green-200" : "bg-yellow-200")}>{row.original.isVerified ? "Yes" : "No"}</span>
+        ),
       },
       {
         accessorKey: "createdAt",
-        header: "Created At",
+        header: "Joined",
         cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
       },
     ],
@@ -57,44 +68,35 @@ export default function AdminAllViewUsersPage() {
 
   return (
     <div className="p-4">
-      <div className="mb-4">
-        <Input placeholder="Search users..." />
-      </div>
-
-      {isLoading ? (
-        <div className="space-y-2">
-          {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-10 w-full" />
+      <h2 className="text-xl font-bold">Registered Users</h2>
+      <Table className="mt-5 min-w-full text-sm text-left">
+        <TableHeader className="bg-gray-100">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id} className="px-4 py-2 font-medium">
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
+            </TableRow>
           ))}
-        </div>
-      ) : (
-        <div className="overflow-x-auto border rounded-lg">
-          <table className="min-w-full text-sm text-left">
-            <thead className="bg-gray-100">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id} className="px-4 py-2 font-medium">
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-t">
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-2">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+        </TableHeader>
+        {isLoading ? (
+          <TableLoader columnCount={columns.length} />
+        ) : (
+          <TableBody>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id} className="border-t">
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id} className="px-4 py-2">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        )}
+      </Table>
     </div>
   );
 }
