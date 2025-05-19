@@ -2,12 +2,17 @@ import { Toaster } from "react-hot-toast";
 import PageRoutes from "./routes";
 import ReduxProvider from "./providers/ReduxProvider";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 function Root() {
   return (
     <>
       <ReduxProvider>
-        <PageRoutes />
-        <Toaster />
+        <QueryClientProvider client={queryClient}>
+          <PageRoutes />
+          <Toaster />
+        </QueryClientProvider>
       </ReduxProvider>
     </>
   );

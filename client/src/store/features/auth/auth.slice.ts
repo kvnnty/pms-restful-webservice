@@ -40,21 +40,21 @@ const authSlice = createSlice({
       }
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchCurrentUser.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-        state.isLoggedIn = true;
-      })
-      .addCase(fetchCurrentUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
-  },
+  // extraReducers: (builder) => {
+  //   builder
+  //     .addCase(fetchCurrentUser.pending, (state) => {
+  //       state.loading = true;
+  //     })
+  //     .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+  //       state.loading = false;
+  //       state.user = action.payload;
+  //       state.isLoggedIn = true;
+  //     })
+  //     .addCase(fetchCurrentUser.rejected, (state, action) => {
+  //       state.loading = false;
+  //       state.error = action.payload as string;
+  //     });
+  // },
 });
 
 export const { login, logout, updateUser } = authSlice.actions;

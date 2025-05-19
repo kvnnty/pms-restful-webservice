@@ -1,20 +1,46 @@
+import { Suspense } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
+// Layouts
 import AuthPagesLayout from "@/layouts/AuthPagesLayout";
 import DashboardLayout from "@/layouts/DashboardLayout";
+
+// Public Pages
 import NotFound from "@/pages/404/page";
 import LandingPage from "@/pages/Landing";
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
+
+// Dashboard Shared Pages
 import AccountPage from "@/pages/dashboard/account/page";
-import OrderByIdPage from "@/pages/dashboard/parkings/[id]/page";
-import OrdersPage from "@/pages/dashboard/parkings/page";
 import OverviewPage from "@/pages/dashboard/overview/page";
 import SettingsPage from "@/pages/dashboard/settings/page";
-import ClientByIdPage from "@/pages/dashboard/vehicles/[id]/ClientByIdPage";
-import VehiclesPage from "@/pages/dashboard/vehicles/page";
+
+// Admin Pages
+import LogsPage from "@/pages/dashboard/admin/logs/page";
+import ViewParkingSlotRequestDetailsPage from "@/pages/dashboard/admin/parking-slot-requests/[id]/page";
+import ViewAllParkingSlotRequestsPage from "@/pages/dashboard/admin/parking-slot-requests/page";
+import AdminViewParkingDetailsPage from "@/pages/dashboard/admin/parkings/[id]/page";
+import AdminParkingsPage from "@/pages/dashboard/admin/parkings/pages";
+import AdminViewAllUsersPage from "@/pages/dashboard/admin/users/page";
+import AdminViewVehicleDetailsPage from "@/pages/dashboard/admin/vehicles/[id]/page";
+import AdminViewAllVehiclesPage from "@/pages/dashboard/admin/vehicles/page";
+import AdminRoutes from "./protected/AdminRoutes";
+
+// User Pages
+import UserViewParkingDetailsPage from "@/pages/dashboard/user/parkings/[id]/page";
+import UserParkingsPage from "@/pages/dashboard/user/parkings/page";
+import UserViewBookingRequestPage from "@/pages/dashboard/user/requests/[id]/page";
+import UserCreateBookingRequestPage from "@/pages/dashboard/user/requests/create/page";
+import UserBookingRequestsPage from "@/pages/dashboard/user/requests/page";
+import UserVehicleDetailsPage from "@/pages/dashboard/user/vehicles/[id]/page";
+import UserVehiclesPage from "@/pages/dashboard/user/vehicles/page";
+import UserRegisterVehicle from "@/pages/dashboard/user/vehicles/register-vehicle/page";
+import UserRoutes from "./protected/UserRoutes";
+
+// Utils
+import AdminViewUserDetailsPage from "@/pages/dashboard/admin/users/[id]/page";
 import LoadingPage from "@/pages/loading/page";
-import { Suspense } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import AdminRoute from "./protected/AdminRoutes";
 import ProtectedRoute from "./protected/ProtectedRoutes";
 
 function PageRoutes() {
@@ -22,37 +48,65 @@ function PageRoutes() {
     <BrowserRouter>
       <Suspense fallback={<LoadingPage />}>
         <Routes>
-          <Route index Component={LandingPage} />
-
-          <Route path="auth" Component={AuthPagesLayout}>
-            <Route path="login" Component={Login} />
-            <Route path="register" Component={Register} />
+          {/* Public */}
+          <Route index element={<LandingPage />} />
+          <Route path="auth" element={<AuthPagesLayout />}>
+            <Route index element={<Navigate to="login" replace />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
           </Route>
 
-          <Route Component={ProtectedRoute}>
-            <Route path="dashboard" Component={DashboardLayout}>
+          {/* Protected */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="dashboard" element={<DashboardLayout />}>
               <Route index element={<Navigate to="overview" replace />} />
-              <Route path="overview" Component={OverviewPage} />
-              <Route path="settings" Component={SettingsPage} />
-              <Route path="account" Component={AccountPage} />
+              <Route path="overview" element={<OverviewPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="account" element={<AccountPage />} />
 
-              <Route path="vehicles">
-                <Route path="orders" Component={AdminRoute}>
-                  <Route index Component={OrdersPage} />
-                  <Route path=":id" Component={OrderByIdPage} />
+              {/* User Routes */}
+              <Route path="user" element={<UserRoutes />}>
+                <Route path="vehicles">
+                  <Route index element={<UserVehiclesPage />} />
+                  <Route path="register-vehicle" element={<UserRegisterVehicle />} />
+                  <Route path=":id" element={<UserVehicleDetailsPage />} />
+                </Route>
+                <Route path="requests">
+                  <Route index element={<UserBookingRequestsPage />} />
+                  <Route path="create" element={<UserCreateBookingRequestPage />} />
+                  <Route path=":id" element={<UserViewBookingRequestPage />} />
+                </Route>
+                <Route path="parkings">
+                  <Route index element={<UserParkingsPage />} />
+                  <Route path=":id" element={<UserViewParkingDetailsPage />} />
                 </Route>
               </Route>
 
-              <Route path="">
-                <Route index Component={VehiclesPage} />
-                <Route path=":id" Component={ClientByIdPage} />
+              {/* Admin Routes */}
+              <Route path="admin" element={<AdminRoutes />}>
+                <Route path="users">
+                  <Route index element={<AdminViewAllUsersPage />} />
+                  <Route path=":id" element={<AdminViewUserDetailsPage />} />
+                </Route>
+                <Route path="parkings">
+                  <Route index element={<AdminParkingsPage />} />
+                  <Route path=":id" element={<AdminViewParkingDetailsPage />} />
+                </Route>
+                <Route path="vehicles">
+                  <Route index element={<AdminViewAllVehiclesPage />} />
+                  <Route path=":id" element={<AdminViewVehicleDetailsPage />} />
+                </Route>
+                <Route path="parking-slot-requests">
+                  <Route index element={<ViewAllParkingSlotRequestsPage />} />
+                  <Route path=":id" element={<ViewParkingSlotRequestDetailsPage />} />
+                </Route>
+                <Route path="logs" element={<LogsPage />} />
               </Route>
-
             </Route>
           </Route>
 
-          {/* Catch-all */}
-          <Route path="*" Component={NotFound} />
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
