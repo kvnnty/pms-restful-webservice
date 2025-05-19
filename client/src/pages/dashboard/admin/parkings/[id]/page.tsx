@@ -9,17 +9,18 @@ import { Edit, Plus, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
-import UpdateParkingDetails from "./components/UpdateParkingDetails";
-import DeleteParking from "./components/DeleteParking";
 import AddBulkParkingSpots from "./components/AddBulkParkingSpots";
 import AddSingleParkingSpot from "./components/AddSingleParkingSpot";
+import DeleteParking from "./components/DeleteParking";
+import UpdateParkingDetails from "./components/UpdateParkingDetails";
+import clsx from "clsx";
 
 export default function AdminViewParkingDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [parking, setParking] = useState<Parking | null>(null);
-  const [pakringSlots, setParkingSlots] = useState<ParkingSlot[]>([]);
+  const [parkingSlots, setParkingSlots] = useState<ParkingSlot[]>([]);
   const [loadingParking, setLoadingParking] = useState(true);
   const [loadingParkingSlots, setLoadingParkingSlots] = useState(true);
   const [page, setPage] = useState(1);
@@ -100,6 +101,7 @@ export default function AdminViewParkingDetailsPage() {
           <p className="text-gray-600 mt-2">
             Capacity: <strong>{parking.capacity} vehicles</strong>
           </p>
+          <div className="bg-gray-200 px-3 py-1 mt-3 w-fit rounded">{parkingSlots.filter((slot) => slot.status === "AVAILABLE").length} spots available</div>
         </div>
 
         <section className="border-t pt-5">
@@ -120,25 +122,38 @@ export default function AdminViewParkingDetailsPage() {
           <div className="mt-5">
             {loadingParkingSlots ? (
               <p>Loading slots...</p>
-            ) : pakringSlots.length === 0 ? (
+            ) : parkingSlots.length === 0 ? (
               <p className="text-gray-500">No slots found for this parking.</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {pakringSlots.map((slot) => (
-                  <div key={slot.id} className={`border rounded p-3 shadow-sm text-sm ${slot.status === "AVAILABLE" ? "text-green-600" : "text-red-600"}`}>
+              <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                {parkingSlots.map((slot) => (
+                  <div
+                    key={slot.id}
+                    className={`border rounded-2xl p-3 text-sm ${
+                      slot.status === "AVAILABLE" ? "bg-green-100 text-green-900 border-green-200" : "bg-gray-100 text-gray-600 border-gray-200"
+                    }`}>
                     <p>
-                      <strong>Slot:</strong> {slot.slotNumber}
+                      Slot: <strong>{slot.slotNumber}</strong>
                     </p>
                     <p>
-                      <strong>Type:</strong> {slot.vehicleType}
+                      Type: <strong>{slot.vehicleType}</strong>
                     </p>
                     <p>
-                      <strong>Size:</strong> {slot.vehicleSize}
+                      Size: <strong>{slot.vehicleSize}</strong>
                     </p>
                     <p>
-                      <strong>Location:</strong> {slot.location}
+                      Location:<strong>{slot.location}</strong>{" "}
                     </p>
-                    <p className="font-semibold">{slot.status}</p>
+                    <div className="mt-3 flex items-end justify-between">
+                      <p
+                        className={clsx(
+                          "font-semibold px-3 py-1 rounded-full text-center max-w-fit",
+                          slot.status === "AVAILABLE" ? "bg-green-200 text-green-600 border-green-200" : "bg-gray-200 text-gray-600 border-gray-200"
+                        )}>
+                        {slot.status}
+                      </p>
+                      <Button size="sm">Edit</Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -155,7 +170,7 @@ export default function AdminViewParkingDetailsPage() {
               <button
                 className="px-3 py-1 border rounded disabled:opacity-50"
                 onClick={() => setPage((p) => p + 1)}
-                disabled={pakringSlots.length < limit || loadingParkingSlots}>
+                disabled={parkingSlots.length < limit || loadingParkingSlots}>
                 Next
               </button>
             </div>

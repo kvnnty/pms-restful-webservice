@@ -74,7 +74,7 @@ export default function VehicleRegistrationModal() {
 
       const response = await axiosClient.post("/vehicles/register", payload);
       toast.success(response.data.message);
-      navigate("/dashboard/vehicles");
+      navigate(`/dashboard/user/vehicles/${response.data.data.id}`);
     } catch (error: any) {
       console.error(error);
       toast.error(error?.response?.data?.message || "Something went wrong.");

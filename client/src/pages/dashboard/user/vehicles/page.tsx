@@ -2,11 +2,9 @@
 
 import GlobalDialog from "@/components/GlobalDialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import axiosClient from "@/config/axios.config";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import VehicleRegistrationModal from "./components/VehicleRegistrationModal";
 
@@ -14,23 +12,13 @@ export default function MyVehiclesPage() {
   const navigate = useNavigate();
   const [isVehicleRegistrationModalOpen, setIsVehicleRegistrationModalOpen] = useState(false);
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["myVehicles"],
     queryFn: async () => {
       const res = await axiosClient.get("/vehicles/user");
       return res.data.data;
     },
   });
-
-  const handleDelete = async (vehicleId: string) => {
-    try {
-      await axiosClient.delete(`/vehicles/${vehicleId}`);
-      toast.success("Vehicle deleted");
-      refetch();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to delete vehicle");
-    }
-  };
 
   if (isLoading) return <div className="p-4">Loading vehicles...</div>;
   if (isError) return <div className="p-4 text-red-500">Error: {(error as any).message}</div>;
@@ -55,37 +43,9 @@ export default function MyVehiclesPage() {
                 </div>
 
                 <div className="flex gap-2 mt-4">
-                  <Button variant="outline" onClick={() => navigate(`/dashboard/vehicles/${v.id}`)}>
+                  <Button variant="outline" onClick={() => navigate(`/dashboard/user/vehicles/${v.id}`)}>
                     View
                   </Button>
-
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="secondary">Update</Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Update Vehicle</DialogTitle>
-                      </DialogHeader>
-                      <div className="text-sm text-gray-600">Update form goes here.</div>
-                    </DialogContent>
-                  </Dialog>
-
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="destructive">Delete</Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Are you sure?</DialogTitle>
-                        <DialogDescription>This action cannot be undone. This will permanently delete this vehicle.</DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <DialogClose className="px-4 rounded-lg text-white bg-gray-400">Cancel</DialogClose>
-                        <Button onClick={() => handleDelete(v.id)}>Delete</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
                 </div>
               </li>
             ))}

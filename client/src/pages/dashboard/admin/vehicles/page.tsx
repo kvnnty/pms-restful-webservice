@@ -53,10 +53,10 @@ export default function AdminViewAllVehiclesPage() {
       cell: ({ row }) => (
         <div className="flex gap-2 items-center">
           <Link to={`/dashboard/admin/vehicles/${row.original.id}`}>
-            <Button>View vehicle details</Button>
+            <Button variant="outline">View vehicle details</Button>
           </Link>
           <Link to={`/dashboard/admin/users/${row.original.ownerId}`}>
-            <Button>View Owner</Button>
+            <Button variant="outline">View Owner</Button>
           </Link>
         </div>
       ),

@@ -3,10 +3,10 @@
 import TableLoader from "@/components/loaders/TableLoader";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import axiosClient from "@/config/axios.config";
-import { useQuery } from "@tanstack/react-query";
 import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
 import clsx from "clsx";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 
 type User = {
   id: string;
@@ -18,16 +18,23 @@ type User = {
   createdAt: string;
 };
 
-async function fetchUsers(): Promise<User[]> {
-  const res = await axiosClient.get("/users");
-  return res.data.data;
-}
-
 export default function AdminAllViewUsersPage() {
-  const { data, isLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: fetchUsers,
-  });
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  useEffect(() => {
+    async function fetchUsers() {
+      setLoading(true);
+      try {
+        const res = await axiosClient.get("/users");
+        setUsers(res.data.data);
+      } catch (error: any) {
+        toast(error.response.data.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchUsers();
+  }, []);
 
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
@@ -53,7 +60,7 @@ export default function AdminAllViewUsersPage() {
       },
       {
         accessorKey: "createdAt",
-        header: "Joined",
+        header: "Joined On",
         cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
       },
     ],
@@ -61,7 +68,7 @@ export default function AdminAllViewUsersPage() {
   );
 
   const table = useReactTable({
-    data: data ?? [],
+    data: users,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -70,7 +77,7 @@ export default function AdminAllViewUsersPage() {
     <div className="p-4">
       <h2 className="text-xl font-bold">Registered Users</h2>
       <Table className="mt-5 min-w-full text-sm text-left">
-        <TableHeader className="bg-gray-100">
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -81,7 +88,7 @@ export default function AdminAllViewUsersPage() {
             </TableRow>
           ))}
         </TableHeader>
-        {isLoading ? (
+        {loading ? (
           <TableLoader columnCount={columns.length} />
         ) : (
           <TableBody>

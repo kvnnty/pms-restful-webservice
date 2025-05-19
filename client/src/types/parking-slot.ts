@@ -1,3 +1,5 @@
+import type { Parking } from "./parking";
+
 export interface ParkingSlot {
   id: string;
   slotNumber: string;
@@ -6,4 +8,5 @@ export interface ParkingSlot {
   location: string;
   status: string;
   parkingId: string;
+  parking?: Parking;
 }

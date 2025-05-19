@@ -9,7 +9,7 @@ export const USER_NAVLINKS = [
   { href: "/dashboard/overview", label: "Dashboard", icon: Home },
   { href: "/dashboard/user/vehicles", label: "My Vehicles", icon: Car },
   { href: "/dashboard/user/parkings", label: "View Parkings", icon: BusIcon },
-  { href: "/dashboard/user/requests", label: "My Booking Requests", icon: Ticket },
+  { href: "/dashboard/user/booking-requests", label: "My Booking Requests", icon: Ticket },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
@@ -18,7 +18,7 @@ export const ADMIN_NAVLINKS = [
   { href: "/dashboard/admin/users", label: "User Management", icon: Users },
   { href: "/dashboard/admin/vehicles", label: "Vehicles", icon: Car },
   { href: "/dashboard/admin/parkings", label: "Manage Parkings", icon: ParkingCircle },
-  { href: "/dashboard/admin/parking-slot-booking-requests", label: "Slot Requests", icon: Ticket },
+  { href: "/dashboard/admin/parking-slot-booking-requests", label: "Booking Requests", icon: Ticket },
   { href: "/dashboard/admin/logs", label: "System Logs", icon: ScrollText },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
@@ -58,7 +58,7 @@ export default function Sidebar() {
           </div>
         </div>
         <div>
-          <Link to="dashboard/account" className={`flex items-center gap-3 p-3 rounded-md transition-all bg-gray-100 border`}>
+          <Link to="/dashboard/account" className={`flex items-center gap-3 p-3 rounded-md transition-all bg-gray-100 border`}>
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" />
               <AvatarFallback className="uppercase">

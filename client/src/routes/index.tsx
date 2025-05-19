@@ -17,8 +17,7 @@ import OverviewPage from "@/pages/dashboard/overview/page";
 import SettingsPage from "@/pages/dashboard/settings/page";
 
 // Admin Pages
-import LogsPage from "@/pages/dashboard/admin/logs/page";
-import ViewParkingSlotRequestDetailsPage from "@/pages/dashboard/admin/parking-slot-booking-requests/[id]/page";
+import LogsPage from "@/pages/dashboard/admin/system-logs/page";
 import AdminViewAllParkingSlotRequestsPage from "@/pages/dashboard/admin/parking-slot-booking-requests/page";
 import AdminViewParkingDetailsPage from "@/pages/dashboard/admin/parkings/[id]/page";
 import AdminParkingsPage from "@/pages/dashboard/admin/parkings/page";
@@ -30,8 +29,7 @@ import AdminRoutes from "./protected/AdminRoutes";
 // User Pages
 import UserViewParkingDetailsPage from "@/pages/dashboard/user/parkings/[id]/page";
 import UserParkingsPage from "@/pages/dashboard/user/parkings/page";
-import UserViewBookingRequestPage from "@/pages/dashboard/user/requests/[id]/page";
-import UserBookingRequestsPage from "@/pages/dashboard/user/requests/page";
+import UserBookingRequestsPage from "@/pages/dashboard/user/booking-requests/page";
 import UserVehicleDetailsPage from "@/pages/dashboard/user/vehicles/[id]/page";
 import UserVehiclesPage from "@/pages/dashboard/user/vehicles/page";
 import UserRoutes from "./protected/UserRoutes";
@@ -68,10 +66,7 @@ function PageRoutes() {
                   <Route index element={<UserVehiclesPage />} />
                   <Route path=":id" element={<UserVehicleDetailsPage />} />
                 </Route>
-                <Route path="requests">
-                  <Route index element={<UserBookingRequestsPage />} />
-                  <Route path=":id" element={<UserViewBookingRequestPage />} />
-                </Route>
+                <Route path="booking-requests" element={<UserBookingRequestsPage />} />
                 <Route path="parkings">
                   <Route index element={<UserParkingsPage />} />
                   <Route path=":id" element={<UserViewParkingDetailsPage />} />
@@ -92,10 +87,7 @@ function PageRoutes() {
                   <Route index element={<AdminViewAllVehiclesPage />} />
                   <Route path=":id" element={<AdminViewVehicleDetailsPage />} />
                 </Route>
-                <Route path="parking-slot-booking-requests">
-                  <Route index element={<AdminViewAllParkingSlotRequestsPage />} />
-                  <Route path=":id" element={<ViewParkingSlotRequestDetailsPage />} />
-                </Route>
+                <Route path="parking-slot-booking-requests" element={<AdminViewAllParkingSlotRequestsPage />} />
                 <Route path="logs" element={<LogsPage />} />
               </Route>
             </Route>
