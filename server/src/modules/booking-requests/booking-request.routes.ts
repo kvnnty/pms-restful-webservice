@@ -13,6 +13,7 @@ const { validate } = validationMiddleware;
 router.use(requireAuth);
 
 router.post("/", requireRole(Role.USER), validate(CreateSlotRequestDto), bookingRequestController.create);
+router.get("/me", requireRole(Role.USER), bookingRequestController.getUserBookingRequests);
 router.put("/:id", validate(UpdateSlotRequestDto), bookingRequestController.update);
 router.delete("/:id", bookingRequestController.delete);
 router.post("/:id/decide", requireRole(Role.ADMIN), validate(DecisionDto), bookingRequestController.decide);

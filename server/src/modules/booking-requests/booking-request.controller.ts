@@ -21,7 +21,7 @@ class BookingRequestController {
     const userId = (req as any).user.id;
     const { id } = req.params;
     await bookingRequestService.deleteRequest({ userId, bookingRequestId: id });
-    res.status(204).send();
+    res.status(StatusCodes.NO_CONTENT).send();
   });
 
   decide = catchAsync(async (req, res) => {
@@ -40,7 +40,13 @@ class BookingRequestController {
   getBySlotId = catchAsync(async (req, res) => {
     const { slotId } = req.params;
     const requests = await bookingRequestService.getBySlotId(slotId);
-    res.status(200).json(ApiResponse.success({ message: "Requests fetched", data: requests }));
+    res.json(ApiResponse.success({ message: "Requests fetched", data: requests }));
+  });
+
+  getUserBookingRequests = catchAsync(async (req, res) => {
+    const user = (req as any).user;
+    const requests = await bookingRequestService.getUserBookingRequests(user.id);
+    res.json(ApiResponse.success({ message: "User bookings retrieved", data: requests }));
   });
 }
 

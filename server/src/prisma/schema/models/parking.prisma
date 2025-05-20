@@ -2,11 +2,11 @@ model Parking {
   id           String        @id @default(uuid())
   name         String
   address      String
-  pricePerHour Float
+  pricePerHour Float         @map("price_per_hour")
   capacity     Int
   parkingSlots ParkingSlot[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
 
   @@map("parkings")
 }

@@ -10,12 +10,7 @@ export class ParkingService {
   }
 
   async findAll() {
-    return await prisma.parking.findMany({
-      include: {
-        parkingSlots: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    return await prisma.parking.findMany({ orderBy: { createdAt: "desc" } });
   }
 
   async findById(id: string) {

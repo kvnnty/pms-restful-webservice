@@ -1,9 +1,10 @@
 import { BookingRequestStatus, ParkingSlotStatus, Role } from "@prisma/client";
-import { CreateSlotRequestDto as CreateBookingRequestDto, DecisionDto, UpdateSlotRequestDto } from "./booking-request.dto";
-import { prisma } from "../../prisma/client";
 import { BadRequestException } from "../../exceptions/bad-request.exception";
-import { ResourceNotFoundException } from "../../exceptions/resource-not-found.exception";
 import { ForbiddenException } from "../../exceptions/forbidden.exception";
+import { ResourceNotFoundException } from "../../exceptions/resource-not-found.exception";
+import { prisma } from "../../prisma/client";
+import { CreateSlotRequestDto as CreateBookingRequestDto, DecisionDto, UpdateSlotRequestDto } from "./booking-request.dto";
+import mailUtil from "../../utils/mail.util";
 
 class BookingRequestService {
   async createRequest({ userId, data }: { userId: string; data: CreateBookingRequestDto }) {
@@ -91,16 +92,27 @@ class BookingRequestService {
       where: { id: bookingRequestId },
       include: {
         vehicle: true,
-        slot: true,
+        slot: {
+          include: {
+            parking: true,
+          },
+        },
       },
     });
 
     if (!bookingRequest) throw new ResourceNotFoundException("Booking request not found.");
+    const user = await prisma.user.findUnique({ where: { id: bookingRequest.userId } });
+
+    if (!user) throw new ResourceNotFoundException("User not found");
+
     if (bookingRequest.status !== BookingRequestStatus.PENDING) {
       throw new BadRequestException("Only pending requests can be decided.");
     }
 
     if (decision.status === BookingRequestStatus.REJECTED) {
+      const html = `Hello ${user.lastName},\nWe're sad to inform you that your request to book a parking slot in ${bookingRequest.slot?.parking?.name} has been rejected`;
+      mailUtil.sendEmail(user.email, "Parking Slot Booking Request rejected", html);
+
       return prisma.bookingRequest.update({
         where: { id: bookingRequestId },
         data: { status: BookingRequestStatus.REJECTED },
@@ -123,6 +135,8 @@ class BookingRequestService {
         },
       }),
     ]);
+    const html = `Hello ${user.lastName},\nWe're glad to inform you that your request to book a parking slot in ${bookingRequest.slot.parking?.name} has been approved`;
+    mailUtil.sendEmail(user.email, "Parking Slot Booking Request Approved", html);
 
     return { message: "Booking approved and slot assigned." };
   }
@@ -142,8 +156,13 @@ class BookingRequestService {
         take: Number(limit),
         orderBy: { createdAt: "desc" },
         include: {
+          user: true,
           vehicle: true,
-          slot: true,
+          slot: {
+            include: {
+              parking: true,
+            },
+          },
         },
       }),
       prisma.bookingRequest.count({ where }),
@@ -165,6 +184,23 @@ class BookingRequestService {
       include: {
         vehicle: true,
         user: true,
+      },
+    });
+  }
+  async getUserBookingRequests(userId: string) {
+    const user = prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new ResourceNotFoundException("User not found");
+
+    return prisma.bookingRequest.findMany({
+      where: { userId },
+      include: {
+        vehicle: true,
+        user: true,
+        slot: {
+          include: {
+            parking: true,
+          },
+        },
       },
     });
   }
