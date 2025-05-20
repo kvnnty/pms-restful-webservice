@@ -1,6 +1,7 @@
 "use client";
 
 import TableLoader from "@/components/loaders/TableLoader";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import axiosClient from "@/config/axios.config";
 import type { BookingRequest } from "@/types/parking-slot-booking-request";
@@ -87,6 +88,18 @@ export default function UserBookingRequestsPage() {
       accessorKey: "createdAt",
       header: "Requested At",
       cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: () => {
+        return (
+          <div className="flex items-center gap-2">
+            <Button variant="outline">Update</Button>
+            <Button variant="outline">Cancel</Button>
+          </div>
+        );
+      },
     },
   ];
 

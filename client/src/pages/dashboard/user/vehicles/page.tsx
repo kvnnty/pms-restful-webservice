@@ -1,27 +1,75 @@
 "use client";
 
 import GlobalDialog from "@/components/GlobalDialog";
+import TableLoader from "@/components/loaders/TableLoader";
 import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import axiosClient from "@/config/axios.config";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import type { Vehicle } from "@/types/vehicle";
+import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 import VehicleRegistrationModal from "./components/VehicleRegistrationModal";
 
 export default function MyVehiclesPage() {
-  const navigate = useNavigate();
   const [isVehicleRegistrationModalOpen, setIsVehicleRegistrationModalOpen] = useState(false);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["myVehicles"],
-    queryFn: async () => {
-      const res = await axiosClient.get("/vehicles/user");
-      return res.data.data;
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const res = await axiosClient.get("/vehicles/user");
+        setVehicles(res.data.data);
+      } catch (err: any) {
+        toast.error(err.response.data.message);
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
+
+  const columns: ColumnDef<Vehicle>[] = [
+    {
+      accessorKey: "plateNumber",
+      header: "Plate Number",
+      cell: ({ row }) => <span className="font-medium bg-gray-200 px-3 py-2 rounded">{row.original.plateNumber}</span>,
     },
-  });
+    {
+      accessorKey: "vehicleType",
+      header: "Type",
+    },
+    {
+      accessorKey: "vehicleSize",
+      header: "Size",
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Registered On",
+      cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div className="flex gap-2 items-center">
+          <Link to={`/dashboard/user/vehicles/${row.original.id}`}>
+            <Button variant="outline">View vehicle details</Button>
+          </Link>
+        </div>
+      ),
+    },
+  ];
 
-  if (isLoading) return <div className="p-4">Loading vehicles...</div>;
-  if (isError) return <div className="p-4 text-red-500">Error: {(error as any).message}</div>;
+  const table = useReactTable({
+    data: vehicles,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
     <>
@@ -31,28 +79,31 @@ export default function MyVehiclesPage() {
           <Button onClick={() => setIsVehicleRegistrationModalOpen(true)}>Register New Vehicle</Button>
         </div>
 
-        {data.length ? (
-          <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {data.map((v: any) => (
-              <li key={v.id} className="p-4 border rounded-2xl shadow-sm hover:shadow-md transition bg-white space-y-2">
-                <div>
-                  <h2 className="text-lg font-semibold">{v.plateNumber}</h2>
-                  <p>Type: {v.vehicleType}</p>
-                  <p>Size: {v.vehicleSize}</p>
-                  <p className="text-sm text-gray-500">Added on {new Date(v.createdAt).toLocaleDateString()}</p>
-                </div>
-
-                <div className="flex gap-2 mt-4">
-                  <Button variant="outline" onClick={() => navigate(`/dashboard/user/vehicles/${v.id}`)}>
-                    View
-                  </Button>
-                </div>
-              </li>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</TableHead>
+                ))}
+              </TableRow>
             ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No vehicles found.</p>
-        )}
+          </TableHeader>
+
+          {loading ? (
+            <TableLoader columnCount={columns.length} />
+          ) : (
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          )}
+        </Table>
       </div>
       <GlobalDialog isOpen={isVehicleRegistrationModalOpen} setIsOpen={setIsVehicleRegistrationModalOpen} title="Register New Vehicle" maxWidth={700}>
         <VehicleRegistrationModal />
