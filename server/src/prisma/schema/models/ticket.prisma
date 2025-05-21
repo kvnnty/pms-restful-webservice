@@ -1,0 +1,5 @@
+model Ticket {
+  id String @id @default(uuid())
+
+  @@map("tickets")
+}

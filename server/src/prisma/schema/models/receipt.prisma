@@ -1,0 +1,5 @@
+model Receipts {
+  id String @id @default(uuid())
+
+  @@map("receipts")
+}

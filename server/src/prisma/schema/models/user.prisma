@@ -1,0 +1,23 @@
+enum Role {
+  USER
+  ADMIN
+  PARKING_ATTENDANT
+}
+
+model User {
+  id              String           @id @default(uuid())
+  email           String           @unique
+  password        String
+  firstName       String           @map("first_name")
+  lastName        String           @map("last_name")
+  isVerified      Boolean          @default(false) @map("is_verified")
+  role            Role?            @default(USER)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  vehicles        Vehicle[]
+  logs            Log[]
+  slotRequests    BookingRequest[]
+  parkingSessions ParkingSession[]
+
+  @@map("users")
+}

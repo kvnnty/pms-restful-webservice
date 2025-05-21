@@ -1,0 +1,19 @@
+enum ParkingSlotStatus {
+  AVAILABLE
+  UNAVAILABLE
+}
+
+model ParkingSlot {
+  id              String            @id @default(uuid())
+  slotNumber      String            @unique @map("slot_number")
+  vehicleType     VehicleType       @map("vehicle_type")
+  status          ParkingSlotStatus @default(AVAILABLE)
+  slotRequests    BookingRequest[]
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  parkingId       String?           @map("parking_id")
+  parking         Parking?          @relation(fields: [parkingId], references: [id])
+  parkingSessions ParkingSession[]
+
+  @@map("parking_slots")
+}
