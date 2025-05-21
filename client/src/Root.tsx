@@ -1,6 +1,6 @@
 import { Toaster } from "react-hot-toast";
-import PageRoutes from "./routes";
 import ReduxProvider from "./providers/ReduxProvider";
+import PageRoutes from "./routes";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 

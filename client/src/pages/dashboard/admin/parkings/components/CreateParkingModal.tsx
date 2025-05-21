@@ -16,9 +16,9 @@ const formSchema = z.object({
   name: z
     .string({ required_error: "Parking name is required", invalid_type_error: "Parking name must be a string" })
     .min(1, { message: "Please enter parking name" }),
-  address: z
-    .string({ required_error: "Parking address is required", invalid_type_error: "Parking address must be a string" })
-    .min(1, { message: "Please enter parking address" }),
+  location: z
+    .string({ required_error: "Parking location is required", invalid_type_error: "Parking location must be a string" })
+    .min(1, { message: "Please enter parking location" }),
   pricePerHour: z.number({ required_error: "Parking price per hour rate is required" }).positive(),
   capacity: z.number({ required_error: "Parking capacity is required" }).int().positive(),
 });
@@ -36,7 +36,7 @@ export default function CreateParkingModal() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      address: "",
+      location: "",
       capacity: undefined,
       pricePerHour: undefined,
     },
@@ -67,9 +67,9 @@ export default function CreateParkingModal() {
           {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
         </div>
         <div>
-          <label>Address</label>
-          <Input className="mt-2" placeholder="Parking address" {...register("address")} />
-          {errors.address && <p className="text-sm text-red-500">{errors.address.message}</p>}
+          <label>Parking location</label>
+          <Input className="mt-2" placeholder="Parking location" {...register("location")} />
+          {errors.location && <p className="text-sm text-red-500">{errors.location.message}</p>}
         </div>
         <div>
           <label>Price per hour</label>

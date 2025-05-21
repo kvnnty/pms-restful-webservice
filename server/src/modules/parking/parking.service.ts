@@ -1,12 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import { ParkingSlotStatus, PrismaClient } from "@prisma/client";
 import { CreateParkingDto, UpdateParkingDto } from "./parking.dto";
 import { ResourceNotFoundException } from "../../exceptions/resource-not-found.exception";
-
+import parkingUtil from "../../utils/parking.util";
 const prisma = new PrismaClient();
 
 export class ParkingService {
   async create(data: CreateParkingDto) {
-    return await prisma.parking.create({ data });
+    const code = await parkingUtil.generateParkingCode();
+    return await prisma.parking.create({ data: { code, ...data } });
   }
 
   async findAll() {
@@ -14,13 +15,27 @@ export class ParkingService {
   }
 
   async findById(id: string) {
-    const parking = await prisma.parking.findUnique({
-      where: { id },
-      include: { parkingSlots: true },
-    });
-    if (!parking) throw new ResourceNotFoundException("Invalid parking ID. The specified parking does not exist.");
+    const [parking, availableSlotCount] = await prisma.$transaction([
+      prisma.parking.findUnique({
+        where: { id },
+        include: { parkingSlots: true },
+      }),
+      prisma.parkingSlot.count({
+        where: {
+          parkingId: id,
+          status: ParkingSlotStatus.AVAILABLE,
+        },
+      }),
+    ]);
 
-    return parking;
+    if (!parking) {
+      throw new ResourceNotFoundException("Invalid parking ID. The specified parking does not exist.");
+    }
+
+    return {
+      ...parking,
+      availableSlots: availableSlotCount,
+    };
   }
 
   async update(id: string, data: UpdateParkingDto) {

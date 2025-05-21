@@ -9,8 +9,7 @@ import { Edit, Plus, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
-import AddBulkParkingSpots from "./components/AddBulkParkingSpots";
-import AddSingleParkingSpot from "./components/AddSingleParkingSpot";
+import AddParkingSpots from "./components/AddParkingSpots";
 import DeleteParking from "./components/DeleteParking";
 import UpdateParkingDetails from "./components/UpdateParkingDetails";
 import clsx from "clsx";
@@ -26,8 +25,7 @@ export default function AdminViewParkingDetailsPage() {
   const [page, setPage] = useState(1);
   const limit = 5;
 
-  const [isAddingBulkParkingModalOpen, setIsAddingBulkParkingModalOpen] = useState(false);
-  const [isAddingSingleParkingModalOpen, setIsAddingSingleParkingModalOpen] = useState(false);
+  const [isAddingParkingModalOpen, setIsAddingParkingModalOpen] = useState(false);
   const [isEditingParkingModalOpen, setIsEditingParkingModalOpen] = useState(false);
   const [isDeleteParkingModalOpen, setIsDeleteParkingModalOpen] = useState(false);
 
@@ -92,7 +90,7 @@ export default function AdminViewParkingDetailsPage() {
           </div>
         </div>
         <p className="text-gray-700">
-          Located at <strong> {parking.address}</strong>
+          Located at <strong> {parking.location}</strong>
         </p>
         <div className="text-gray-600 border p-4 rounded-lg">
           <p className="text-gray-600">
@@ -101,22 +99,16 @@ export default function AdminViewParkingDetailsPage() {
           <p className="text-gray-600 mt-2">
             Capacity: <strong>{parking.capacity} vehicles</strong>
           </p>
-          <div className="bg-gray-200 px-3 py-1 mt-3 w-fit rounded">{parkingSlots.filter((slot) => slot.status === "AVAILABLE").length} spots available</div>
+          <div className="bg-gray-200 px-3 py-1 mt-3 w-fit rounded">{parking.availableSlots} spots available</div>
         </div>
 
         <section className="border-t pt-5">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold mb-4">Parking Spots</h2>
-            <div className="flex items-center gap-2">
-              <Button onClick={() => setIsAddingBulkParkingModalOpen(true)}>
-                <Plus />
-                Add bulk Parking spots
-              </Button>
-              <Button onClick={() => setIsAddingSingleParkingModalOpen(true)}>
-                <Plus />
-                Add single parking spots
-              </Button>
-            </div>
+            <Button onClick={() => setIsAddingParkingModalOpen(true)}>
+              <Plus />
+              Add Parking spots
+            </Button>
           </div>
 
           <div className="mt-5">
@@ -138,22 +130,13 @@ export default function AdminViewParkingDetailsPage() {
                     <p>
                       Type: <strong>{slot.vehicleType}</strong>
                     </p>
-                    <p>
-                      Size: <strong>{slot.vehicleSize}</strong>
+                    <p
+                      className={clsx(
+                        "mt-5 font-semibold px-3 py-1 rounded-full text-center max-w-fit",
+                        slot.status === "AVAILABLE" ? "bg-green-200 text-green-600 border-green-200" : "bg-gray-200 text-gray-600 border-gray-200"
+                      )}>
+                      {slot.status}
                     </p>
-                    <p>
-                      Location:<strong>{slot.location}</strong>{" "}
-                    </p>
-                    <div className="mt-3 flex items-end justify-between">
-                      <p
-                        className={clsx(
-                          "font-semibold px-3 py-1 rounded-full text-center max-w-fit",
-                          slot.status === "AVAILABLE" ? "bg-green-200 text-green-600 border-green-200" : "bg-gray-200 text-gray-600 border-gray-200"
-                        )}>
-                        {slot.status}
-                      </p>
-                      <Button size="sm">Edit</Button>
-                    </div>
                   </div>
                 ))}
               </div>
@@ -183,11 +166,8 @@ export default function AdminViewParkingDetailsPage() {
       <GlobalDialog isOpen={isDeleteParkingModalOpen} setIsOpen={setIsDeleteParkingModalOpen} title="Remove Parking facility">
         <DeleteParking parkingId={id} onClose={() => setIsDeleteParkingModalOpen(false)} />
       </GlobalDialog>
-      <GlobalDialog isOpen={isAddingBulkParkingModalOpen} setIsOpen={setIsAddingBulkParkingModalOpen} title="Add Bulk Parking Spots" maxWidth={900}>
-        <AddBulkParkingSpots parkingId={id} onClose={() => setIsAddingBulkParkingModalOpen(false)} />
-      </GlobalDialog>
-      <GlobalDialog isOpen={isAddingSingleParkingModalOpen} setIsOpen={setIsAddingSingleParkingModalOpen} title="Add single Parking Spot">
-        <AddSingleParkingSpot parkingId={id} onClose={() => setIsAddingSingleParkingModalOpen(false)} />
+      <GlobalDialog isOpen={isAddingParkingModalOpen} setIsOpen={setIsAddingParkingModalOpen} title="Add Bulk Parking Spots" maxWidth={900}>
+        <AddParkingSpots parkingId={id} refresh={() => fetchParkingSlots(id)} onClose={() => setIsAddingParkingModalOpen(false)} />
       </GlobalDialog>
     </>
   );

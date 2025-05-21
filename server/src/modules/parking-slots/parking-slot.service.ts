@@ -1,26 +1,11 @@
-import { ParkingSlot, Prisma, VehicleSize, VehicleType } from "@prisma/client";
+import { ParkingSlot, Prisma, VehicleType } from "@prisma/client";
 import { BadRequestException } from "../../exceptions/bad-request.exception";
 import { ResourceNotFoundException } from "../../exceptions/resource-not-found.exception";
 import { prisma } from "../../prisma/client";
 import parkingSlotUtil from "../../utils/parking.slot.util";
-import { CreateBulkSlotsDto, CreateSlotDto, UpdateSlotDto } from "./parking-slot.dto";
+import { CreateBulkSlotsDto, UpdateSlotDto } from "./parking-slot.dto";
 
 class ParkingSlotService {
-  async createSlot(data: CreateSlotDto): Promise<ParkingSlot> {
-    const parking = await prisma.parking.findUnique({ where: { id: data.parkingId }, include: { parkingSlots: true } });
-
-    if (!parking) throw new BadRequestException("Invalid parking ID. The specified parking does not exist.");
-
-    if (parking.parkingSlots.length >= parking.capacity) throw new BadRequestException("Cannot create slot. Parking capacity has been reached.");
-
-    const slotNumber = await parkingSlotUtil.generateSlotNumber("LOT1");
-    return prisma.parkingSlot.create({
-      data: {
-        ...data,
-        slotNumber,
-      },
-    });
-  }
 
   async bulkCreateSlots(data: CreateBulkSlotsDto): Promise<void> {
     const parking = await prisma.parking.findUnique({ where: { id: data.parkingId } });
@@ -71,7 +56,6 @@ class ParkingSlotService {
 
     const searchUpper = search?.toUpperCase();
     const isValidVehicleType = searchUpper && Object.values(VehicleType).includes(searchUpper as VehicleType);
-    const isValidVehicleSize = searchUpper && Object.values(VehicleSize).includes(searchUpper as VehicleSize);
 
     const where: Prisma.ParkingSlotWhereInput = {
       parkingId,
@@ -79,7 +63,6 @@ class ParkingSlotService {
         OR: [
           { slotNumber: { contains: search, mode: "insensitive" } },
           ...(isValidVehicleType ? [{ vehicleType: { equals: searchUpper as VehicleType } }] : []),
-          ...(isValidVehicleSize ? [{ vehicleSize: { equals: searchUpper as VehicleSize } }] : []),
         ],
       }),
       ...(isAdmin ? {} : { status: "AVAILABLE" }),

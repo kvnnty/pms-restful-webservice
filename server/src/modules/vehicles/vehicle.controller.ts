@@ -3,6 +3,9 @@ import { StatusCodes } from "http-status-codes";
 import vehicleService from "./vehicle.service";
 import { catchAsync } from "../../common/handlers/catchAsync";
 import { ApiResponse } from "../../common/payload/ApiResponse";
+import validationMiddleware from "../../middleware/validation.middleware";
+import { z } from "zod";
+import { plateNumberValidation } from "./vehicle.dto";
 
 class VehicleController {
   createVehicle = catchAsync(async (req: Request, res: Response) => {
@@ -45,6 +48,30 @@ class VehicleController {
   getVehicleById = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
     const vehicle = await vehicleService.getVehicleById(id);
+    res.json(
+      ApiResponse.success({
+        code: StatusCodes.OK,
+        message: "Vehicle fetched successfully",
+        data: vehicle,
+      })
+    );
+  });
+
+  getVehicleByPlateNumber = catchAsync(async (req: Request, res: Response) => {
+    const { plateNumber } = req.params;
+
+    const validationResult = plateNumberValidation.safeParse({ plateNumber });
+
+    if (!validationResult.success) {
+      return res.status(StatusCodes.BAD_REQUEST).json(
+        ApiResponse.error({
+          code: StatusCodes.BAD_REQUEST,
+          message: "Please enter a valid plate number e.g., RAH123U",
+        })
+      );
+    }
+
+    const vehicle = await vehicleService.getVehicleByPlateNumber(plateNumber);
     res.json(
       ApiResponse.success({
         code: StatusCodes.OK,

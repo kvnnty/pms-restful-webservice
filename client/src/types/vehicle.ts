@@ -1,8 +1,12 @@
-export interface Vehicle  {
+import type { BookingRequest } from "./parking-slot-booking-request";
+import type { User } from "./user";
+
+export interface Vehicle {
   id: string;
   plateNumber: string;
   vehicleType: string;
-  vehicleSize: string;
   ownerId: string;
+  owner: User;
+  bookingRequests: BookingRequest[];
   createdAt: string;
-};
+}

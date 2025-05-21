@@ -1,13 +1,15 @@
+import { LogStatus } from "@prisma/client";
 import { DuplicateResourceException } from "../../exceptions/duplicate-resource.exception";
 import { ForbiddenException } from "../../exceptions/forbidden.exception";
 import { ResourceNotFoundException } from "../../exceptions/resource-not-found.exception";
 import { prisma } from "../../prisma/client";
+import logsService from "../system-logs/system-logs.service";
 import { RegisterVehicleDto, UpdateVehicleDto } from "./vehicle.dto";
 
 class VehicleService {
   createVehicle = async ({ data, userId }: { data: RegisterVehicleDto; userId: string }) => {
     const { plateNumber, ...rest } = data;
-    console.log(data);
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     const existing = await prisma.vehicle.findUnique({
       where: { plateNumber },
     });
@@ -16,13 +18,21 @@ class VehicleService {
       throw new DuplicateResourceException("Vehicle with this plate number already exists.");
     }
 
-    return prisma.vehicle.create({
+    const vehicle = await prisma.vehicle.create({
       data: {
         ...rest,
         plateNumber,
         ownerId: userId,
       },
     });
+
+    await logsService.createLog({
+      userId: user?.id!,
+      action: `User with email: [${user?.email}] has registered a new vehicle with plate number: [${vehicle.plateNumber}]`,
+      status: LogStatus.SUCCESS,
+    });
+
+    return vehicle;
   };
 
   updateVehicle = async ({ userId, vehicleId, data }: { userId: String; vehicleId: string; data: UpdateVehicleDto }) => {
@@ -30,7 +40,7 @@ class VehicleService {
     if (!vehicle) throw new ResourceNotFoundException("Vehicle not found");
 
     if (vehicle.ownerId != userId) {
-      throw new ForbiddenException("You are not allowed to delete this vehicle");
+      throw new ForbiddenException("You are not allowed to update this vehicle");
     }
 
     if (data.plateNumber && data.plateNumber !== vehicle.plateNumber) {
@@ -57,7 +67,13 @@ class VehicleService {
     return prisma.vehicle.delete({ where: { id: vehicleId } });
   };
   getVehicleById = async (vehicleId: string) => {
-    const vehicle = await prisma.vehicle.findUnique({ where: { id: vehicleId } });
+    const vehicle = await prisma.vehicle.findUnique({ where: { id: vehicleId }, include: { owner: true } });
+    if (!vehicle) throw new ResourceNotFoundException("Vehicle not found");
+    return vehicle;
+  };
+
+  getVehicleByPlateNumber = async (plateNumber: string) => {
+    const vehicle = await prisma.vehicle.findUnique({ where: { plateNumber }, include: { owner: true, slotRequests: true } });
     if (!vehicle) throw new ResourceNotFoundException("Vehicle not found");
     return vehicle;
   };

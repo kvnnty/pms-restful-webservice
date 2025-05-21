@@ -53,9 +53,6 @@ export default function AdminViewAllParkingSlotRequestsPage() {
             <p className="mt-2">
               Parking Slot number: <strong>{row.original.slot.slotNumber}</strong>
             </p>
-            <p className="mt-3">
-              Parking Slot location: <strong>{row.original.slot.location}</strong>
-            </p>
           </div>
         </div>
       ),
@@ -71,9 +68,6 @@ export default function AdminViewAllParkingSlotRequestsPage() {
               <Link to={`/dashboard/admin/vehicles/${row.original.vehicleId}`}>
                 <span className="px-2 py-1 bg-gray-200 rounded">{row.original.vehicle.plateNumber}</span>
               </Link>
-            </p>
-            <p className="mt-3">
-              Vehicle size: <strong>{row.original.vehicle.vehicleSize}</strong>
             </p>
             <p className="mt-2">
               Vehicle type: <strong>{row.original.vehicle.vehicleType}</strong>

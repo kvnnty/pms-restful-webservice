@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/store/features/auth/auth.selector";
-import { BusIcon, Car, Home, LayoutDashboard, ParkingCircle, ScrollText, Settings, Ticket, Users } from "lucide-react";
+import { BusIcon, Car, DollarSign, Home, LayoutDashboard, ParkingCircle, ScrollText, Ticket, Users } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
@@ -10,22 +10,27 @@ export const USER_NAVLINKS = [
   { href: "/dashboard/user/vehicles", label: "My Vehicles", icon: Car },
   { href: "/dashboard/user/parkings", label: "View Parkings", icon: BusIcon },
   { href: "/dashboard/user/booking-requests", label: "My Booking Requests", icon: Ticket },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/dashboard/user/bills", label: "My Bills", icon: DollarSign },
 ];
 
 export const ADMIN_NAVLINKS = [
   { href: "/dashboard/overview", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/admin/users", label: "User Management", icon: Users },
-  { href: "/dashboard/admin/vehicles", label: "Vehicles", icon: Car },
+  { href: "/dashboard/admin/vehicles", label: "Registered Vehicles", icon: Car },
   { href: "/dashboard/admin/parkings", label: "Manage Parkings", icon: ParkingCircle },
   { href: "/dashboard/admin/parking-slot-booking-requests", label: "Booking Requests", icon: Ticket },
   { href: "/dashboard/admin/logs", label: "System Logs", icon: ScrollText },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/dashboard/admin/bills", label: "Bills", icon: DollarSign },
+];
+
+export const PARKING_ATTENDANT_NAVLINKS = [
+  { href: "/dashboard/overview", label: "Dashboard", icon: Home },
+  { href: "/dashboard/attendant/parkings", label: "View Parkings", icon: BusIcon },
 ];
 
 export default function Sidebar() {
   const { currentUser } = useAuth();
-  const navLinks = currentUser?.role === "USER" ? USER_NAVLINKS : ADMIN_NAVLINKS;
+  const navLinks = currentUser?.role === "USER" ? USER_NAVLINKS : currentUser?.role === "PARKING_ATTENDANT" ? PARKING_ATTENDANT_NAVLINKS : ADMIN_NAVLINKS;
   const location = useLocation();
 
   return (

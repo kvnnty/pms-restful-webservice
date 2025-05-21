@@ -26,7 +26,7 @@ export default function Navbar() {
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" />
               <AvatarFallback className="uppercase">
-                {currentUser?.firstName[0]} {currentUser?.lastName[0]}
+                {currentUser?.firstName[0]}{currentUser?.lastName[0]}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-32">

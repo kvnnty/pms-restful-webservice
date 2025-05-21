@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input";
 import Spinner from "@/components/ui/spinner";
 import axiosClient from "@/config/axios.config";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Car } from "lucide-react";
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { type RegisterForm, registerSchema } from "./validation";
-import { Car } from "lucide-react";
 
 const Register = () => {
   const navigate = useNavigate();

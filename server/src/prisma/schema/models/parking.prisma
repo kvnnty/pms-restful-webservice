@@ -1,7 +1,8 @@
 model Parking {
   id           String        @id @default(uuid())
-  name         String
-  address      String
+  code         String        @unique @map("parking_code")
+  name         String        @map("parking_name")
+  location     String        @map("location")
   pricePerHour Float         @map("price_per_hour")
   capacity     Int
   parkingSlots ParkingSlot[]

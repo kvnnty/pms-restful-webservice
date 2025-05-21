@@ -17,19 +17,18 @@ export default function MyVehiclesPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const fetchVehicles = async () => {
+    try {
+      const res = await axiosClient.get("/vehicles/user");
+      setVehicles(res.data.data);
+    } catch (err: any) {
+      toast.error(err.response.data.message);
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchVehicles = async () => {
-      try {
-        const res = await axiosClient.get("/vehicles/user");
-        setVehicles(res.data.data);
-      } catch (err: any) {
-        toast.error(err.response.data.message);
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchVehicles();
   }, []);
 
@@ -42,10 +41,6 @@ export default function MyVehiclesPage() {
     {
       accessorKey: "vehicleType",
       header: "Type",
-    },
-    {
-      accessorKey: "vehicleSize",
-      header: "Size",
     },
     {
       accessorKey: "createdAt",
@@ -106,7 +101,7 @@ export default function MyVehiclesPage() {
         </Table>
       </div>
       <GlobalDialog isOpen={isVehicleRegistrationModalOpen} setIsOpen={setIsVehicleRegistrationModalOpen} title="Register New Vehicle" maxWidth={700}>
-        <VehicleRegistrationModal />
+        <VehicleRegistrationModal refresh={fetchVehicles} />
       </GlobalDialog>
     </>
   );

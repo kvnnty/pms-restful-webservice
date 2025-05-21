@@ -39,10 +39,6 @@ export default function AdminViewAllVehiclesPage() {
       header: "Type",
     },
     {
-      accessorKey: "vehicleSize",
-      header: "Size",
-    },
-    {
       accessorKey: "createdAt",
       header: "Registered On",
       cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
