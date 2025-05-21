@@ -1,12 +1,15 @@
 "use client";
 
+import GlobalDialog from "@/components/GlobalDialog";
 import TableLoader from "@/components/loaders/TableLoader";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import axiosClient from "@/config/axios.config";
 import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import RegisterParkingAttendantModal from "./components/RegisterParkingAttendantModal";
 
 type User = {
   id: string;
@@ -21,18 +24,21 @@ type User = {
 export default function AdminAllViewUsersPage() {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
-  useEffect(() => {
-    async function fetchUsers() {
-      setLoading(true);
-      try {
-        const res = await axiosClient.get("/users");
-        setUsers(res.data.data);
-      } catch (error: any) {
-        toast(error.response.data.message);
-      } finally {
-        setLoading(false);
-      }
+  const [isRegisterParkingAttendantModalOpen, setRegisterParkingAttendantModalOpen] = useState(false);
+
+  async function fetchUsers() {
+    setLoading(true);
+    try {
+      const res = await axiosClient.get("/users");
+      setUsers(res.data.data);
+    } catch (error: any) {
+      toast(error.response.data.message);
+    } finally {
+      setLoading(false);
     }
+  }
+
+  useEffect(() => {
     fetchUsers();
   }, []);
 
@@ -46,7 +52,7 @@ export default function AdminAllViewUsersPage() {
             <h3 className="font-semibold">
               {row.original.firstName} {row.original.lastName}
             </h3>
-            <span className="text-sm text-gray-400">{row.original.email}</span>,
+            <span className="text-sm text-gray-400">{row.original.email}</span>
           </div>
         ),
       },
@@ -74,36 +80,44 @@ export default function AdminAllViewUsersPage() {
   });
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold">Registered Users</h2>
-      <Table className="mt-5 min-w-full text-sm text-left">
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} className="px-4 py-2 font-medium">
-                  {flexRender(header.column.columnDef.header, header.getContext())}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        {loading ? (
-          <TableLoader columnCount={columns.length} />
-        ) : (
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} className="border-t">
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="px-4 py-2">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
+    <>
+      <div className="p-4">
+        <div className="flex justify-between">
+          <h2 className="text-xl font-bold">Registered Users</h2>
+          <Button onClick={() => setRegisterParkingAttendantModalOpen(true)}>Register parking attendant</Button>
+        </div>
+        <Table className="mt-5 min-w-full text-sm text-left">
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="px-4 py-2 font-medium">
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
                 ))}
               </TableRow>
             ))}
-          </TableBody>
-        )}
-      </Table>
-    </div>
+          </TableHeader>
+          {loading ? (
+            <TableLoader columnCount={columns.length} />
+          ) : (
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id} className="border-t">
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="px-4 py-2">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          )}
+        </Table>
+      </div>
+      <GlobalDialog isOpen={isRegisterParkingAttendantModalOpen} setIsOpen={setRegisterParkingAttendantModalOpen} title="Add new parking lot attendant">
+        <RegisterParkingAttendantModal refresh={fetchUsers} onClose={() => setRegisterParkingAttendantModalOpen(false)} />
+      </GlobalDialog>
+    </>
   );
 }

@@ -74,7 +74,7 @@ export default function UserViewParkingDetailsPage() {
           <h1 className="text-2xl font-bold">{parking.name}</h1>
         </div>
         <p className="text-gray-700">
-          Located at <strong> {parking.address}</strong>
+          Located at <strong> {parking.location}</strong>
         </p>
         <div className="text-gray-600 border p-4 rounded-lg">
           <p className="text-gray-600">
@@ -83,7 +83,7 @@ export default function UserViewParkingDetailsPage() {
           <p className="text-gray-600 mt-2">
             Capacity: <strong>{parking.capacity} vehicles</strong>
           </p>
-          <div className="bg-gray-200 px-3 py-1 mt-3 w-fit rounded">{parkingSlots.filter((slot) => slot.status === "AVAILABLE").length} spots available</div>
+          <div className="bg-gray-200 px-3 py-1 mt-3 w-fit rounded">{parking.availableSlots} spots available</div>
         </div>
         <section className="border-t pt-5">
           <div className="flex items-center justify-between">
@@ -109,12 +109,6 @@ export default function UserViewParkingDetailsPage() {
                       </p>
                       <p>
                         Type: <strong>{slot.vehicleType}</strong>
-                      </p>
-                      <p>
-                        Size: <strong>{slot.vehicleSize}</strong>
-                      </p>
-                      <p>
-                        Location:<strong>{slot.location}</strong>{" "}
                       </p>
                       <div className="mt-3 flex items-end justify-between">
                         <p
@@ -157,7 +151,7 @@ export default function UserViewParkingDetailsPage() {
           </div>
         </section>
       </div>
-      <GlobalDialog isOpen={isBookingModalOpen} setIsOpen={setIsBookingModalOpen} title="Book this parking slot">
+      <GlobalDialog isOpen={isBookingModalOpen} setIsOpen={setIsBookingModalOpen} title="Select vehicle which you want to book this parking spot for">
         <CreateBooking slotId={selectedSlot?.id!} />
       </GlobalDialog>
     </>

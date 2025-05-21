@@ -41,8 +41,8 @@ export default function AdminParkingsPage() {
       cell: ({ row }) => <span className="font-medium bg-gray-200 px-3 py-2 rounded">{row.original.name}</span>,
     },
     {
-      accessorKey: "address",
-      header: "Address",
+      accessorKey: "location",
+      header: "Location",
     },
     {
       accessorKey: "capacity",

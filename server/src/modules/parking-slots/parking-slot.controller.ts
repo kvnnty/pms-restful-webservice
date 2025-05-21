@@ -1,21 +1,9 @@
-import { Role } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
 import { catchAsync } from "../../common/handlers/catchAsync";
 import { ApiResponse } from "../../common/payload/ApiResponse";
 import parkingSlotService from "./parking-slot.service";
 
 class ParkingSlotController {
-  createSlot = catchAsync(async (req, res) => {
-    const slot = await parkingSlotService.createSlot(req.body);
-    return res.status(StatusCodes.CREATED).json(
-      ApiResponse.success({
-        code: StatusCodes.CREATED,
-        message: "Slot created",
-        data: slot,
-      })
-    );
-  });
-
   bulkCreateSlots = catchAsync(async (req, res) => {
     await parkingSlotService.bulkCreateSlots(req.body);
     return res.status(StatusCodes.CREATED).json(

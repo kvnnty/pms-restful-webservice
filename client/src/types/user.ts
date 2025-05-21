@@ -4,5 +4,5 @@ export interface User {
   firstName: String;
   lastName: String;
   isVerified: Boolean;
-  role: "ADMIN" | "USER";
+  role: "ADMIN" | "USER" | "PARKING_ATTENDANT";
 }

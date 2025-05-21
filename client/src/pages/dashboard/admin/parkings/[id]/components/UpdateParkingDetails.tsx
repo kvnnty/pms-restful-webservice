@@ -35,7 +35,7 @@ export default function UpdateParkingDetails({ parking, onClose }: { parking: Pa
     reset,
   } = useForm<FormData>({
     defaultValues: {
-      address: parking.address,
+      address: parking.location,
       name: parking.name,
       capacity: parking.capacity,
       pricePerHour: parking.pricePerHour,

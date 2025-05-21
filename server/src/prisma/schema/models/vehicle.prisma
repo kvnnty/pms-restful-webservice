@@ -4,23 +4,17 @@ enum VehicleType {
   TRUCK
 }
 
-enum VehicleSize {
-  SMALL
-  MEDIUM
-  LARGE
-}
-
 model Vehicle {
-  id           String           @id @default(uuid())
-  plateNumber  String           @unique @map("plate_number")
-  vehicleType  VehicleType      @map("vehicle_type")
-  vehicleSize  VehicleSize      @map("vehicle_size")
-  ownerId      String           @map("owner_id")
-  createdAt    DateTime         @default(now()) @map("created_at")
-  updatedAt    DateTime         @updatedAt @map("updated_at")
-  slotRequests BookingRequest[]
-  attributes   Json
-  owner        User             @relation(fields: [ownerId], references: [id])
+  id              String           @id @default(uuid())
+  plateNumber     String           @unique @map("plate_number")
+  vehicleType     VehicleType      @map("vehicle_type")
+  ownerId         String           @map("owner_id")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  slotRequests    BookingRequest[]
+  owner           User             @relation(fields: [ownerId], references: [id])
+  parkingSessions ParkingSession[]
+  bills           Bill[]
 
   @@map("vehicles")
 }

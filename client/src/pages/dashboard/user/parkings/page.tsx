@@ -36,7 +36,7 @@ export default function UserParkingsPage() {
           <Link to={`/dashboard/user/parkings/${parking.id}`} key={parking.id} className="border rounded-2xl p-5">
             <div>
               <div className="text-lg font-semibold">{parking.name}</div>
-              <p className="text-sm text-gray-600 mt-3">{parking.address}</p>
+              <p className="text-sm text-gray-600 mt-3">{parking.location}</p>
               <p className="text-sm text-gray-600 mt-2">
                 RWF {parking.pricePerHour}/hour — Capacity: {parking.capacity} vehicles
               </p>

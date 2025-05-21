@@ -1,0 +1,15 @@
+enum LogStatus {
+  SUCCESS
+  FAILURE
+}
+
+model SystemLog {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id])
+  status    LogStatus
+  action    String
+  timestamp DateTime  @default(now())
+
+  @@map("system_logs")
+}

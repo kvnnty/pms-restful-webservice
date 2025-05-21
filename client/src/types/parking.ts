@@ -1,7 +1,8 @@
 export interface Parking {
   id: string;
   name: string;
-  address: string;
+  location: string;
+  availableSlots: number;
   pricePerHour: number;
   capacity: number;
   createdAt: string;

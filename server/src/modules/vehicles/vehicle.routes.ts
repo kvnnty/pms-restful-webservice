@@ -16,6 +16,7 @@ router.post("/register", validate(registerVehicleDto), vehicleController.createV
 router.get("/", requireRole(Role.ADMIN), vehicleController.getAllVehicles);
 router.get("/user", vehicleController.getVehiclesByUser);
 router.get("/:id", vehicleController.getVehicleById);
+router.get("/plateNumber/:plateNumber", vehicleController.getVehicleByPlateNumber);
 router.put("/:id", validate(updateVehicleDto), vehicleController.updateVehicle);
 router.delete("/:id", vehicleController.deleteVehicle);
 

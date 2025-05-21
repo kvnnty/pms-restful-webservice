@@ -7,7 +7,7 @@ export interface BookingRequest {
   userId: string;
   vehicleId: string;
   slotId: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: "PENDING" | "APPROVED" | "REJECTED" | "COMPLETE";
   createdAt: string;
   updatedAt: string;
   vehicle: Vehicle;

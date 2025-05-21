@@ -1,15 +1,17 @@
-import { BookingRequestStatus, ParkingSlotStatus, Role } from "@prisma/client";
+import { BookingRequestStatus, LogStatus, ParkingSlotStatus, Role } from "@prisma/client";
 import { BadRequestException } from "../../exceptions/bad-request.exception";
 import { ForbiddenException } from "../../exceptions/forbidden.exception";
 import { ResourceNotFoundException } from "../../exceptions/resource-not-found.exception";
 import { prisma } from "../../prisma/client";
-import { CreateSlotRequestDto as CreateBookingRequestDto, DecisionDto, UpdateSlotRequestDto } from "./booking-request.dto";
 import mailUtil from "../../utils/mail.util";
+import logsService from "../system-logs/system-logs.service";
+import { CreateSlotRequestDto as CreateBookingRequestDto, DecisionDto, UpdateSlotRequestDto } from "./booking-request.dto";
 
 class BookingRequestService {
   async createRequest({ userId, data }: { userId: string; data: CreateBookingRequestDto }) {
     const vehicle = await prisma.vehicle.findUnique({
       where: { id: data.vehicleId },
+      include: { owner: true },
     });
 
     if (!vehicle) throw new ResourceNotFoundException("Vehicle not found");
@@ -25,15 +27,26 @@ class BookingRequestService {
     if (existingPending) {
       throw new BadRequestException("You already have a pending booking request for this vehicle.");
     }
-    const parkingSlot = await prisma.parkingSlot.findUnique({ where: { id: data.slotId } });
+    const parkingSlot = await prisma.parkingSlot.findUnique({
+      where: { id: data.slotId },
+      include: {
+        parking: true,
+      },
+    });
     if (!parkingSlot) throw new BadRequestException("Selected parking slot does not exist.");
     if (parkingSlot.status !== ParkingSlotStatus.AVAILABLE) {
       throw new BadRequestException("Selected parking slot is not available.");
     }
 
-    if (parkingSlot.vehicleType !== vehicle.vehicleType || parkingSlot.vehicleSize !== vehicle.vehicleSize) {
+    if (parkingSlot.vehicleType !== vehicle.vehicleType) {
       throw new BadRequestException("Selected slot is not compatible with your vehicle type.");
     }
+
+    await logsService.createLog({
+      userId: vehicle.ownerId,
+      action: `User with email: [${vehicle.owner?.email}] has requested for a spot in parking ${parkingSlot.parking!.name}`,
+      status: LogStatus.SUCCESS,
+    });
 
     return prisma.bookingRequest.create({
       data: {
@@ -130,11 +143,10 @@ class BookingRequestService {
       }),
       prisma.bookingRequest.update({
         where: { id: bookingRequestId },
-        data: {
-          status: BookingRequestStatus.APPROVED,
-        },
+        data: { status: BookingRequestStatus.APPROVED },
       }),
     ]);
+
     const html = `Hello ${user.lastName},\nWe're glad to inform you that your request to book a parking slot in ${bookingRequest.slot.parking?.name} has been approved`;
     mailUtil.sendEmail(user.email, "Parking Slot Booking Request Approved", html);
 

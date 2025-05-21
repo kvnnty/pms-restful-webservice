@@ -1,0 +1,18 @@
+model ParkingSession {
+  id            String      @id @default(uuid())
+  entryTime     DateTime    @default(now()) @map("start_time")
+  exitTime      DateTime?   @map("end_time")
+  vehicleId     String      @map("vehicle_id")
+  isExited      Boolean     @default(false) @map("is_exited")
+  chargedAmount Float       @default(0)
+  slotId        String      @map("slot_id")
+  userId        String      @map("user_id")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  slot          ParkingSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id])
+  vehicle       Vehicle     @relation(fields: [vehicleId], references: [id])
+  bill          Bill?
+
+  @@map("parking_sessions")
+}

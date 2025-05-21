@@ -2,13 +2,14 @@ enum BookingRequestStatus {
   PENDING
   APPROVED
   REJECTED
+  COMPLETE
 }
 
 model BookingRequest {
   id        String               @id @default(uuid())
   userId    String               @map("user_id")
   vehicleId String               @map("vehicle_id")
-  slotId    String?              @unique @map("slot_id")
+  slotId    String?              @map("slot_id")
   status    BookingRequestStatus @default(PENDING)
   createdAt DateTime             @default(now()) @map("created_at")
   updatedAt DateTime             @updatedAt @map("updated_at")

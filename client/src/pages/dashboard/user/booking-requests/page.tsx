@@ -1,7 +1,6 @@
 "use client";
 
 import TableLoader from "@/components/loaders/TableLoader";
-import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import axiosClient from "@/config/axios.config";
 import type { BookingRequest } from "@/types/parking-slot-booking-request";
@@ -12,10 +11,11 @@ import toast from "react-hot-toast";
 
 export default function UserBookingRequestsPage() {
   const [bookingRequests, setBookingRequests] = useState<BookingRequest[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchBookingRequests = async () => {
+      setLoading(true);
       try {
         const res = await axiosClient.get("/booking-requests/me");
         setBookingRequests(res.data.data);
@@ -42,9 +42,6 @@ export default function UserBookingRequestsPage() {
       cell: ({ row }) => {
         return (
           <div>
-            <p>
-              Vehicle size: <strong>{row.original.vehicle.vehicleSize}</strong>
-            </p>
             <p className="mt-2">
               Vehicle type: <strong>{row.original.vehicle.vehicleType}</strong>
             </p>
@@ -64,9 +61,6 @@ export default function UserBookingRequestsPage() {
             <p className="mt-2">
               Parking Slot number: <strong>{row.original.slot.slotNumber}</strong>
             </p>
-            <p className="mt-2">
-              Parking Slot location: <strong>{row.original.slot.location}</strong>
-            </p>
           </div>
         );
       },
@@ -78,7 +72,11 @@ export default function UserBookingRequestsPage() {
       cell: ({ row }) => {
         const status = row.original.status;
         return (
-          <span className={clsx("px-2 py-1 rounded", status == "APPROVED" ? "bg-green-200" : status === "PENDING" ? "bg-yellow-200" : "bg-red-200")}>
+          <span
+            className={clsx(
+              "px-2 py-1 rounded",
+              status == "APPROVED" ? "bg-green-200" : status === "PENDING" ? "bg-yellow-200" : status === "COMPLETE" ? "bg-gray-200" : "bg-red-200"
+            )}>
             {status}
           </span>
         );
@@ -88,18 +86,6 @@ export default function UserBookingRequestsPage() {
       accessorKey: "createdAt",
       header: "Requested At",
       cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: () => {
-        return (
-          <div className="flex items-center gap-2">
-            <Button variant="outline">Update</Button>
-            <Button variant="outline">Cancel</Button>
-          </div>
-        );
-      },
     },
   ];
 

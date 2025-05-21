@@ -1,0 +1,14 @@
+model Bill {
+  id               String         @id @default(uuid())
+  parkingSessionId String         @unique @map("parking_session_id")
+  vehicleId        String         @map("vehicle_id")
+  userId           String
+  amount           Int
+  createdAt        DateTime       @default(now())
+  isPaid           Boolean        @default(false)
+  parkingSession   ParkingSession @relation(fields: [parkingSessionId], references: [id])
+  vehicle          Vehicle        @relation(fields: [vehicleId], references: [id])
+  user             User           @relation(fields: [userId], references: [id])
+
+  @@map("bills")
+}

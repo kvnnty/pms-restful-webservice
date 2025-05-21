@@ -29,6 +29,11 @@ class UserController {
     const response = ApiResponse.success({ code: StatusCodes.OK, message: "User profile", data: currentUser });
     res.status(StatusCodes.OK).json(response);
   });
+  
+  registerParkingAttendant = catchAsync(async (req: Request, res: Response) => {
+    const user = await userService.registerParkingAttendant(req.body);
+    res.status(StatusCodes.CREATED).json(ApiResponse.success({ code: StatusCodes.CREATED, message: "Parking lot attendant created successfully", data: user }));
+  });
 }
 
 export default new UserController();
