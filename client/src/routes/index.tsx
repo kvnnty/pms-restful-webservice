@@ -15,7 +15,7 @@ import AccountPage from "@/pages/dashboard/account/page";
 import OverviewPage from "@/pages/dashboard/overview/page";
 
 // Admin Pages
-import AdminViewAllParkingSlotRequestsPage from "@/pages/dashboard/admin/parking-slot-booking-requests/page";
+import AdminViewAllBookingRequestsPage from "@/pages/dashboard/admin/booking-requests/page";
 import AdminViewParkingDetailsPage from "@/pages/dashboard/admin/parkings/[id]/page";
 import AdminParkingsPage from "@/pages/dashboard/admin/parkings/page";
 import LogsPage from "@/pages/dashboard/admin/system-logs/page";
@@ -90,7 +90,7 @@ function PageRoutes() {
                   <Route index element={<AdminViewAllVehiclesPage />} />
                   <Route path=":id" element={<AdminViewVehicleDetailsPage />} />
                 </Route>
-                <Route path="parking-slot-booking-requests" element={<AdminViewAllParkingSlotRequestsPage />} />
+                <Route path="booking-requests" element={<AdminViewAllBookingRequestsPage />} />
                 <Route path="logs" element={<LogsPage />} />
                 <Route path="reports" element={<LogsPage />} />
                 <Route path="bills" element={<AdminBills />} />

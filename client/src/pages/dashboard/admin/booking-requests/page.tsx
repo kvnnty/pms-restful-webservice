@@ -78,11 +78,15 @@ export default function AdminViewAllParkingSlotRequestsPage() {
     },
     {
       accessorKey: "status",
-      header: "Request Status",
+      header: "Status",
       cell: ({ row }) => {
         const status = row.original.status;
         return (
-          <span className={clsx("px-2 py-1 rounded", status == "APPROVED" ? "bg-green-200" : status === "PENDING" ? "bg-yellow-200" : "bg-red-200")}>
+          <span
+            className={clsx(
+              "px-2 py-1 rounded",
+              status == "APPROVED" ? "bg-green-200" : status === "PENDING" ? "bg-yellow-200" : status === "COMPLETE" ? "bg-gray-200" : "bg-red-200"
+            )}>
             {status}
           </span>
         );
