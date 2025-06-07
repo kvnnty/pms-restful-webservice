@@ -1,5 +1,5 @@
 import Jwt from "jsonwebtoken";
-import { JWT_SECRET_KEY } from "../config/env.config";
+import { JWT_EXPIRATION_TIME, JWT_SECRET_KEY } from "../config/env.config";
 import { JwtVerificationException } from "../exceptions/jwt-verification.exception";
 import { User } from "@prisma/client";
 
@@ -7,7 +7,7 @@ class JwtUtil {
   generateJwtToken = (payload: User) => {
     try {
       const { id, email, role } = payload;
-      return Jwt.sign({ id, email, role }, JWT_SECRET_KEY, { expiresIn: "2d" });
+      return Jwt.sign({ id, email, role }, JWT_SECRET_KEY, { expiresIn: JWT_EXPIRATION_TIME as any });
     } catch (e: any) {
       throw new JwtVerificationException();
     }

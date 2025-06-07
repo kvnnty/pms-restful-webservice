@@ -5,6 +5,8 @@ config();
 export const PORT = process.env.PORT! || 7654;
 
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY!;
+export const JWT_EXPIRATION_TIME = process.env.JWT_EXPIRATION_TIME!;
+
 export const NODE_ENV = process.env.NODE_ENV! as "development" | "production";
 
 export const MAIL_USERNAME = process.env.MAIL_USERNAME!;

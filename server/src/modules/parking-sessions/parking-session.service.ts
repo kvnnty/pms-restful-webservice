@@ -107,7 +107,7 @@ class ParkingSessionService {
     // Send email to user
     const user = await prisma.user.findUnique({ where: { id: vehicle.ownerId } });
     if (user?.email) {
-      const subject = `Your Parking Receipt - ₭${bill.amount}`;
+      const subject = `Your Parking Receipt - RWF ${bill.amount}`;
       const html = `
         <h2>Parking Bill</h2>
         <p><strong>Vehicle:</strong> ${vehicle.plateNumber}</p>

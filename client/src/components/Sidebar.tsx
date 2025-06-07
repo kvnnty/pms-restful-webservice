@@ -18,7 +18,7 @@ export const ADMIN_NAVLINKS = [
   { href: "/dashboard/admin/users", label: "User Management", icon: Users },
   { href: "/dashboard/admin/vehicles", label: "Registered Vehicles", icon: Car },
   { href: "/dashboard/admin/parkings", label: "Manage Parkings", icon: ParkingCircle },
-  { href: "/dashboard/admin/parking-slot-booking-requests", label: "Booking Requests", icon: Ticket },
+  { href: "/dashboard/admin/booking-requests", label: "Booking Requests", icon: Ticket },
   { href: "/dashboard/admin/logs", label: "System Logs", icon: ScrollText },
   { href: "/dashboard/admin/bills", label: "Bills", icon: DollarSign },
 ];
